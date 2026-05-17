@@ -29,9 +29,9 @@ export default function HomePage() {
     setCurrentUserId(userId);
 
     const [profilesResult, requestsResult, friendsResult] = await Promise.all([
-      supabase.from("profiles").select("*").neq("id", userId).order("created_at", { ascending: false }),
-      supabase.from("friend_requests").select("receiver_id,status").eq("sender_id", userId).in("status", ["pending", "accepted"]),
-      supabase.from("friends").select("friend_id").eq("user_id", userId),
+      (supabase.from("profiles") as any).select("*").neq("id", userId).order("created_at", { ascending: false }),
+      (supabase.from("friend_requests") as any).select("receiver_id,status").eq("sender_id", userId).in("status", ["pending", "accepted"]),
+      (supabase.from("friends") as any).select("friend_id").eq("user_id", userId),
     ]);
 
     if (profilesResult.error) {
@@ -41,8 +41,8 @@ export default function HomePage() {
     }
 
     setUsers(profilesResult.data ?? []);
-    setSentRequests((requestsResult.data ?? []).map((request) => request.receiver_id));
-    setFriends((friendsResult.data ?? []).map((friend) => friend.friend_id));
+    setSentRequests((requestsResult.data ?? []).map((request: any) => request.receiver_id));
+    setFriends((friendsResult.data ?? []).map((friend: any) => friend.friend_id));
     setMessage("Explore everyone in your network and send a friend request.");
     setLoading(false);
   }
@@ -50,7 +50,7 @@ export default function HomePage() {
   async function sendFriendRequest(receiverId: string) {
     if (!currentUserId) return;
     setLoading(true);
-    const { error } = await supabase.from("friend_requests").insert({
+    const { error } = await (supabase.from("friend_requests") as any).insert({
       sender_id: currentUserId,
       receiver_id: receiverId,
       status: "pending",

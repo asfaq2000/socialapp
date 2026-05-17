@@ -43,7 +43,7 @@ export default function SignupPage() {
     }
 
     if (data.user) {
-      await supabase.from("profiles").upsert({
+      await (supabase.from("profiles") as any).upsert({
         id: data.user.id,
         username: username || email.split("@")[0],
         full_name: fullName,

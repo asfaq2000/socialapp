@@ -57,9 +57,9 @@ export default function ChatPage({ params }: ChatPageProps) {
       setCurrentUserId(userId);
 
       const [{ data: friendData, error: friendError }, { data: messageData, error: messagesError }] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", params.userId).single(),
-        supabase
-          .from("messages")
+        (supabase.from("profiles") as any).select("*").eq("id", params.userId).single(),
+        (supabase
+          .from("messages") as any)
           .select("*")
           .or(`and(sender_id.eq.${userId},receiver_id.eq.${params.userId}),and(sender_id.eq.${params.userId},receiver_id.eq.${userId})`)
           .order("created_at", { ascending: true }),
@@ -93,7 +93,7 @@ export default function ChatPage({ params }: ChatPageProps) {
     if (!messageText.trim() || !currentUserId) return;
     const content = messageText.trim();
 
-    const { error } = await supabase.from("messages").insert({
+    const { error } = await (supabase.from("messages") as any).insert({
       sender_id: currentUserId,
       receiver_id: params.userId,
       content,

@@ -33,8 +33,8 @@ export default function FriendRequestsPage() {
     const userId = sessionData.session.user.id;
     setCurrentUserId(userId);
 
-    const { data, error } = await supabase
-      .from("friend_requests")
+    const { data, error } = await (supabase
+      .from("friend_requests") as any)
       .select("id,sender_id,created_at,sender:sender_id(id,username,full_name,avatar_url)")
       .eq("receiver_id", userId)
       .eq("status", "pending")
@@ -59,7 +59,7 @@ export default function FriendRequestsPage() {
     if (!currentUserId) return;
     setLoading(true);
 
-    const { error: updateError } = await supabase.from("friend_requests").update({ status: accept ? "accepted" : "declined" }).eq("id", id);
+    const { error: updateError } = await (supabase.from("friend_requests") as any).update({ status: accept ? "accepted" : "declined" }).eq("id", id);
     if (updateError) {
       setMessage(updateError.message);
       setLoading(false);
@@ -67,7 +67,7 @@ export default function FriendRequestsPage() {
     }
 
     if (accept) {
-      const { error: friendError } = await supabase.from("friends").insert([
+      const { error: friendError } = await (supabase.from("friends") as any).insert([
         { user_id: currentUserId, friend_id: senderId },
         { user_id: senderId, friend_id: currentUserId },
       ]);

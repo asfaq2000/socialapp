@@ -20,14 +20,14 @@ export default function MyFriendsPage() {
     }
 
     const userId = sessionData.session.user.id;
-    const { data: friendLinks, error: friendsError } = await supabase.from("friends").select("friend_id").eq("user_id", userId);
+    const { data: friendLinks, error: friendsError } = await (supabase.from("friends") as any).select("friend_id").eq("user_id", userId);
     if (friendsError) {
       setMessage(friendsError.message);
       setLoading(false);
       return;
     }
 
-    const friendIds = friendLinks?.map((friend) => friend.friend_id) ?? [];
+    const friendIds = friendLinks?.map((friend: any) => friend.friend_id) ?? [];
     if (friendIds.length === 0) {
       setFriends([]);
       setMessage("You don't have any friends yet.");
@@ -35,7 +35,7 @@ export default function MyFriendsPage() {
       return;
     }
 
-    const { data: profiles, error: profilesError } = await supabase.from("profiles").select("*").in("id", friendIds);
+    const { data: profiles, error: profilesError } = await (supabase.from("profiles") as any).select("*").in("id", friendIds);
     if (profilesError) {
       setMessage(profilesError.message);
       setLoading(false);
